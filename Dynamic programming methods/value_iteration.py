@@ -16,22 +16,36 @@ def value_iteration(P, gamma=1.0, theta=1e-6):
     """
     num_states = len(P)
     V = np.zeros(num_states)
-    Q = np.zeros((num_states, len(P[0])))
+    
     while True:
-        prev_V = V.copy()
+        delta = 0
         for s in range(num_states):
+            v = V[s]
             action_values = []
             for a in range(len(P[s])):
                 q_sa = 0
                 for prob, next_state, reward, done in P[s][a]:
-                    Q[s][a] += prob * (reward + gamma * prev_V[next_state] * (1 - done))
-                action_values.append(Q[s][a])
+                    if done:
+                        q_sa += prob * reward
+                    else:
+                        q_sa += prob * (reward + gamma * V[next_state])
+                action_values.append(q_sa)
             V[s] = max(action_values)
-        delta = max(abs(V - prev_V))
+            delta = max(delta, abs(v - V[s]))
         if delta < theta:
             break
 
-    # We can extract pi from V by taking the argmax of the Q-function
-    pi = lambda s: {s:a for s,a in enumerate(np.argmax(Q,axis=1))}[s]
+    # Extract optimal policy from value function
+    def pi(s):
+        action_values = []
+        for a in range(len(P[s])):
+            q_sa = 0
+            for prob, next_state, reward, done in P[s][a]:
+                if done:
+                    q_sa += prob * reward
+                else:
+                    q_sa += prob * (reward + gamma * V[next_state])
+            action_values.append(q_sa)
+        return np.argmax(action_values)
 
-    return V,pi
+    return V, pi
