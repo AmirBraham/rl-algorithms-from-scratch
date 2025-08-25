@@ -9,15 +9,18 @@ def evaluate_policy(policy,P,gamma=1.0,theta=1e-6):
     # theta: convergence threshold since this is an iterative process
     number_of_states = len(P)
     V = np.zeros(number_of_states) # value function is a list of length of the number of states   V_k
-    prev_V = np.zeros(number_of_states) # V_k-1
+    
     while True:
+        delta = 0
         for s in range(number_of_states):
-            for prob,next_state,reward,done in P[s][policy(s)]:
-                V[s]+=(reward + gamma * prev_V[next_state] * (1 - done))*prob
-                # we multiply by (1-done) to avoid updating V[terminal] 
-                # else we end up with V[terminal] = reward + gamma * V[next_state] where next_State can only be the terminal state or undefined
-        delta = max(abs(V-prev_V))
+            v = V[s]
+            V[s] = 0
+            for prob, next_state, reward, done in P[s][policy(s)]:
+                if done:
+                    V[s] += prob * reward
+                else:
+                    V[s] += prob * (reward + gamma * V[next_state])
+            delta = max(delta, abs(v - V[s]))
         if delta < theta:
             break
-        prev_V = V.copy()
     return V
