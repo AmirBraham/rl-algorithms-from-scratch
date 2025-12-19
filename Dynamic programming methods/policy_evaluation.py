@@ -4,7 +4,7 @@ import numpy as np
 def evaluate_policy(policy,P,gamma=1.0,theta=1e-6):
     # policy: a function that maps states to actions
     # P: transition matrix ( probability of next state given current state and action)
-    # P[s][policy(s)] -> prob , next_state, reward , done : probability of next state given current state and action given by the policy
+    # P[s][a] = P[s][policy(s)] -> prob , next_state, reward , done : probability of next state given current state and action given by the policy
     # gamma: discount factor
     # theta: convergence threshold since this is an iterative process
     number_of_states = len(P)
