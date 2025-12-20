@@ -9,6 +9,7 @@ The main algorithms implemented here are:
 - **Policy Improvement**: Extracting greedy policies from value functions  
 - **Policy Iteration**: Alternating between evaluation and improvement to find optimal policies
 - **Value Iteration**: Directly computing optimal value functions and policies
+- **Monte Carlo Prediction**: Both first-visit and every visit monte carlo learning
 
 ## 1. Policy Evaluation
 
@@ -94,32 +95,25 @@ $$V_{k+1}(s) = \max_a \sum_{s', r} p(s', r \mid s, a) \left[ r + \gamma V_k(s') 
 - $\gamma$: Discount factor
 - $V_k(s')$: Value of next state at iteration k
 
-## Implementation Notes
 
-### Terminal State Handling
-All algorithms use the $(1 - \text{done})$ term to properly handle terminal states:
-- For non-terminal states: $(1 - \text{done}) = 1$ → normal value propagation
-- For terminal states: $(1 - \text{done}) = 0$ → only immediate rewards, no future value
+## 5. Monte carlo learning
+We know that the value of state s under the policy $\pi$ is given by :
+$$ v_{\pi}(s) = \mathbb{E}[G_{t:T} | S_t = s] $$
 
-### Convergence Criteria
-- **Policy Evaluation**: Uses $\theta$ threshold to determine when value function has converged
-- **Policy Iteration**: Stops when policy stops changing between iterations
-- **Value Iteration**: Uses similar convergence criteria as policy evaluation
+the return is written as :
+$$ G_{t:T} = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... + \gamma^{T-1} R^{T-1} $$
 
-## Usage
+In MC , first thing is to generate a trajectory
+A trajectory is a series of experiences.
+An experience is sampled from our current policy 
+$$ S_t , A_t , R_t , S_{t+1} ... \sim \pi   $$
 
-```python
-# Example usage of policy iteration
-from policy_evaluation import evaluate_policy
-from policy_enhancement import policy_iteration
-
-# Define your MDP transition matrix P
-# Run policy iteration to find optimal policy
-optimal_policy = policy_iteration(P, gamma=0.9, theta=1e-6)
-```
+$$ V_{T}(S_t) = V_{T}(S_t) + \alpha [G_{t:T} - V_{T-1}(S_t) ] $$
 
 ## Files
 
 - `policy_evaluation.py`: Implementation of policy evaluation algorithm
 - `policy_enhancement.py`: Implementation of policy improvement and policy iteration
 - `readme.md`: This comprehensive documentation file 
+
+
