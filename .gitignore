@@ -20,9 +20,14 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
-Resources
+
+# Books / large reading material (keep notes, never commit the files)
+*.epub
+*.mobi
+Resources/*.pdf
 
 # Virtual environments
+.venv/
 venv/
 env/
 ENV/
@@ -44,10 +49,6 @@ venv.bak/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Books directory (ignore book files but keep readme , I promsie I'll buy them later)
-Books/*
-!Books/readme.md
 
 # Jupyter Notebooks
 .ipynb_checkpoints/

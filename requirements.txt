@@ -1,0 +1,5 @@
+numpy
+matplotlib
+torch
+gymnasium
+gym  # legacy API, used only by the bandit example
